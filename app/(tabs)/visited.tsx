@@ -1,6 +1,14 @@
-import React from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
 type Location = {
   name: string;
@@ -83,17 +91,20 @@ const LOCATIONS: Location[] = [
   }
 ];
 
-const visitedNames = [
-  'Batu Caves',
-  'Chin Swee Temple',
-  'Gunung Mulu National Park',
-  'Mount Kinabalu'
-];
-
-const visitedLocations = LOCATIONS.filter(loc => visitedNames.includes(loc.name));
-
 export default function VisitedScreen() {
   const router = useRouter();
+  const [visitedLocations, setVisitedLocations] = useState<Location[]>([]);
+
+  useEffect(() => {
+    const loadVisited = async () => {
+      const saved = await AsyncStorage.getItem('earnedBadges');
+      const earned = saved ? JSON.parse(saved) : [];
+      const visited = LOCATIONS.filter(loc => earned.includes(loc.name));
+      setVisitedLocations(visited);
+    };
+
+    loadVisited();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -111,7 +122,6 @@ export default function VisitedScreen() {
           <Text style={styles.activeText}>Visited</Text>
         </TouchableOpacity>
       </View>
-
 
       <FlatList
         data={visitedLocations}

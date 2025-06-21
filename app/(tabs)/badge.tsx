@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   badgeLabel: { fontSize: 12, textAlign: 'center', marginTop: 4 },
   hiddenReset: {
     position: 'absolute',
-    top: 10,
+    top: 150,
     left: 10,
     padding: 4,
     opacity: 0.2,
