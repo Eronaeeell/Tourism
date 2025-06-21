@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Animated,
   Dimensions,
+  Easing,
   FlatList,
   Image,
   Platform,
@@ -34,7 +36,10 @@ const LOCATIONS = [
 
 export default function IndexPage() {
   const [earnedBadgeNames, setEarnedBadgeNames] = useState<string[]>([]);
-  const [isBadgeActive, setIsBadgeActive] = useState(true);
+  const [unlockAnimationVisible, setUnlockAnimationVisible] = useState(false);
+  const [unlockedBadgeImage, setUnlockedBadgeImage] = useState<any>(null);
+  const animationScale = useRef(new Animated.Value(0)).current;
+  const animationRotate = useRef(new Animated.Value(0)).current;
   const router = useRouter();
 
   useEffect(() => {
@@ -62,7 +67,13 @@ export default function IndexPage() {
             savedList.push(badgeName);
             await AsyncStorage.setItem('earnedBadges', JSON.stringify(savedList));
             setEarnedBadgeNames(savedList);
-            Alert.alert('🎉 Badge Unlocked!', `${badgeName}`);
+
+            const badge = LOCATIONS.find(loc => loc.name === badgeName);
+            if (badge) {
+              setUnlockedBadgeImage(badge.image);
+              setUnlockAnimationVisible(true);
+              runUnlockAnimation();
+            }
           } else {
             setEarnedBadgeNames(savedList);
           }
@@ -72,6 +83,35 @@ export default function IndexPage() {
 
     processBadgeFromURL();
   }, []);
+
+  const runUnlockAnimation = () => {
+    animationScale.setValue(0);
+    animationRotate.setValue(0);
+
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(animationScale, {
+          toValue: 1.5,
+          duration: 700,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+        Animated.timing(animationRotate, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+      ]),
+      Animated.delay(1500),
+      Animated.timing(animationScale, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+        easing: Easing.in(Easing.bounce),
+      }),
+    ]).start(() => setUnlockAnimationVisible(false));
+  };
 
   const handleResetBadges = async () => {
     await AsyncStorage.removeItem('earnedBadges');
@@ -93,9 +133,7 @@ export default function IndexPage() {
   return (
     <View style={styles.container}>
       <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[styles.toggleButton, styles.activeButton]}
-        >
+        <TouchableOpacity style={[styles.toggleButton, styles.activeButton]}>
           <Text style={styles.activeText}>Badge</Text>
         </TouchableOpacity>
 
@@ -106,8 +144,6 @@ export default function IndexPage() {
           <Text style={styles.inactiveText}>Visited</Text>
         </TouchableOpacity>
       </View>
-
-
 
       <TouchableOpacity style={styles.hiddenReset} onPress={handleResetBadges}>
         <Text style={styles.hiddenResetText}>🔄</Text>
@@ -135,16 +171,39 @@ export default function IndexPage() {
           <View style={styles.badgeCircle}>
             <Image
               source={item.image}
-              style={[
-                styles.badgeImage,
-                !item.earned && styles.unobtainedBadgeImage,
-              ]}
+              style={[styles.badgeImage, !item.earned && styles.unobtainedBadgeImage]}
               resizeMode="contain"
             />
             <Text style={styles.badgeLabel}>{item.name}</Text>
           </View>
         )}
       />
+
+      {unlockAnimationVisible && unlockedBadgeImage && (
+        <View style={[StyleSheet.absoluteFillObject, styles.overlayWrapper]}>
+          <View style={styles.overlayBackground}>
+            <Animated.Image
+              source={unlockedBadgeImage}
+              style={[
+                styles.animatedBadge,
+                {
+                  transform: [
+                    { scale: animationScale },
+                    {
+                      rotate: animationRotate.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '1080deg'],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+              resizeMode="contain"
+            />
+            <Text style={styles.unlockText}>🎉 Badge Unlocked!</Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -154,21 +213,13 @@ const styles = StyleSheet.create({
     flex: 1, paddingTop: 60, backgroundColor: '#eaf2ff', paddingHorizontal: 16,
   },
   topRightButtons: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    flexDirection: 'row',
+    position: 'absolute', top: 10, right: 10, flexDirection: 'row',
   },
   navButton: {
-    backgroundColor: '#007aff',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    marginLeft: 6,
+    backgroundColor: '#007aff', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 6, marginLeft: 6,
   },
   navButtonText: {
-    color: '#fff',
-    fontSize: 12,
+    color: '#fff', fontSize: 12,
   },
   title: {
     fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 10,
@@ -179,9 +230,7 @@ const styles = StyleSheet.create({
   progressBarBackground: {
     width: SCREEN_WIDTH - 60, height: 20, backgroundColor: '#e0e0e0', borderRadius: 10, overflow: 'hidden',
   },
-  progressBarFill: {
-    height: '100%', backgroundColor: '#007aff',
-  },
+  progressBarFill: { height: '100%', backgroundColor: '#007aff' },
   progressText: { marginTop: 6, fontWeight: 'bold' },
   badgeGrid: { alignItems: 'center' },
   badgeCircle: { margin: 10, alignItems: 'center', width: 100 },
@@ -189,43 +238,27 @@ const styles = StyleSheet.create({
   unobtainedBadgeImage: { opacity: 0.3 },
   badgeLabel: { fontSize: 12, textAlign: 'center', marginTop: 4 },
   hiddenReset: {
-    position: 'absolute',
-    top: 150,
-    left: 10,
-    padding: 4,
-    opacity: 0.2,
+    position: 'absolute', top: 150, left: 10, padding: 4, opacity: 0.2,
   },
   hiddenResetText: {
-    fontSize: 16,
-    color: '#555',
+    fontSize: 16, color: '#555',
   },
   toggleContainer: {
-  flexDirection: 'row',
-  alignSelf: 'center',
-  backgroundColor: '#f0f0f0',
-  borderRadius: 30,
-  padding: 4,
-  marginBottom: 16,
-  marginTop: 20,
-},
-toggleButton: {
-  paddingVertical: 6,
-  paddingHorizontal: 20,
-  borderRadius: 20,
-},
-activeButton: {
-  backgroundColor: '#007aff',
-},
-inactiveButton: {
-  backgroundColor: 'transparent',
-},
-activeText: {
-  color: '#fff',
-  fontWeight: 'bold',
-},
-inactiveText: {
-  color: '#999',
-  fontWeight: 'bold',
-},
-
+    flexDirection: 'row', alignSelf: 'center', backgroundColor: '#f0f0f0', borderRadius: 30, padding: 4, marginBottom: 16, marginTop: 20,
+  },
+  toggleButton: {
+    paddingVertical: 6, paddingHorizontal: 20, borderRadius: 20,
+  },
+  activeButton: { backgroundColor: '#007aff' },
+  inactiveButton: { backgroundColor: 'transparent' },
+  activeText: { color: '#fff', fontWeight: 'bold' },
+  inactiveText: { color: '#999', fontWeight: 'bold' },
+  overlayWrapper: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999, elevation: 10,
+  },
+  overlayBackground: { alignItems: 'center' },
+  animatedBadge: { width: 220, height: 220, marginBottom: 16 },
+  unlockText: {
+    fontSize: 22, color: '#fff', fontWeight: 'bold', textAlign: 'center',
+  },
 });
