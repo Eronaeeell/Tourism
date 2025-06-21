@@ -1,6 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -18,11 +19,25 @@ const CreatePostScreen: React.FC = () => {
   const [caption, setCaption] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [photo, setPhoto] = useState<any>(null);
-  const [badgeId, setBadgeId] = useState<string>('🏝 Beach Explorer');
+  const [badgeId, setBadgeId] = useState<string>('');
+  const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
   const username = 'BlockDee';
+
+  // Load badges user earned from AsyncStorage
+  useEffect(() => {
+    const loadEarnedBadges = async () => {
+      const saved = await AsyncStorage.getItem('earnedBadges');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setEarnedBadges(parsed);
+        if (parsed.length > 0) setBadgeId(`🎖️ ${parsed[0]}`); // default select first badge
+      }
+    };
+    loadEarnedBadges();
+  }, []);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -60,7 +75,7 @@ const CreatePostScreen: React.FC = () => {
     router.push('/');
   };
 
-  const badges = ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu', '🎖️ Mount Kinabalu'];
+  const badges = earnedBadges.map((name) => `🎖️ ${name}`);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -92,18 +107,22 @@ const CreatePostScreen: React.FC = () => {
 
       <Text style={styles.badgeLabel}>Choose your Badge:</Text>
       <View style={styles.badgeContainer}>
-        {badges.map((badge) => (
-          <TouchableOpacity
-            key={badge}
-            style={[
-              styles.badgeButton,
-              badge === badgeId && styles.selectedBadge
-            ]}
-            onPress={() => setBadgeId(badge)}
-          >
-            <Text style={styles.badgeText}>{badge}</Text>
-          </TouchableOpacity>
-        ))}
+        {badges.length > 0 ? (
+          badges.map((badge) => (
+            <TouchableOpacity
+              key={badge}
+              style={[
+                styles.badgeButton,
+                badge === badgeId && styles.selectedBadge
+              ]}
+              onPress={() => setBadgeId(badge)}
+            >
+              <Text style={styles.badgeText}>{badge}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={{ color: '#999' }}>No badges unlocked yet.</Text>
+        )}
       </View>
 
       <TouchableOpacity onPress={uploadPost} style={styles.postButton} disabled={loading}>
