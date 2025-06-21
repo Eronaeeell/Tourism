@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 import { db, storage } from '../firebaseConfig';
 
-const BADGES = ['🏕 Explorer', '🥾 Hiker', '🏛 Cultural Seeker', '📸 Photographer'];
+const BADGES = ['🏅 IPOH', '🏅 MELAKA', '🏅 GENTING', ' PORT DICKSON'];
 
 export default function CreatePost() {
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
-  const [username, setUsername] = useState('tourist123');
+  const [username, setUsername] = useState('BlockDee');
   const [image, setImage] = useState(null);
   const [badgeId, setBadgeId] = useState('');
 

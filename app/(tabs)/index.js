@@ -1,13 +1,48 @@
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
     FlatList, Image, Modal,
     Pressable, StyleSheet,
     Text, TouchableOpacity, View
 } from 'react-native';
-import { db } from '../../firebaseConfig';
+
+import ipoh from '../../assets/images/ipoh1.jpeg';
+import melaka from '../../assets/images/melaka1.jpeg';
+import pd from '../../assets/images/pd1.jpeg';
+
+const MOCK_POSTS = [
+  {
+    id: '1',
+    image: melaka,
+    username: 'alice',
+    caption: 'yea',
+    location: 'mlaka',
+    badgeId: '🏝 melaka',
+    likes: 98,
+    comments: 12,
+  },
+  {
+    id: '2',
+    image: pd,
+    username: 'bob',
+    caption: 'Peak life 🏔',
+    location: 'port dickson',
+    badgeId: '🥾 pd',
+    likes: 120,
+    comments: 33,
+  },
+  {
+    id: '3',
+    image: ipoh,
+    username: 'chloe',
+    caption: 'Culture vibes 🏯',
+    location: 'ipoh',
+    badgeId: '🏛 ipoh',
+    likes: 75,
+    comments: 9,
+  }
+];
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
@@ -15,30 +50,12 @@ export default function HomeScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newPosts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        imageUrl: doc.data().imageUrl || 'https://placekitten.com/300/300',
-        likes: Math.floor(Math.random() * 100), // Simulated like count
-        comments: Math.floor(Math.random() * 30), // Simulated comment count
-        eBadge: '🏅 Explorer', // Placeholder badge
-        ...doc.data()
-      }));
-      setPosts(newPosts);
-    });
-
-    return () => unsubscribe();
+    setPosts(MOCK_POSTS);
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => setSelectedPost(item)}>
-      <Image source={{ uri: item.imageUrl }} style={styles.postImage} />
-      <View style={styles.postDetails}>
-        <Text style={styles.username}>{item.username}</Text>
-        <Text numberOfLines={2} style={styles.caption}>{item.caption}</Text>
-        <Text style={styles.location}>📍 {item.location}</Text>
-      </View>
+    <TouchableOpacity style={styles.imageBox} onPress={() => setSelectedPost(item)}>
+      <Image source={item.image} style={styles.imageThumbnail} />
     </TouchableOpacity>
   );
 
@@ -50,6 +67,7 @@ export default function HomeScreen() {
         data={posts}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        numColumns={2}
         contentContainerStyle={{ paddingBottom: 120 }}
       />
 
@@ -67,8 +85,7 @@ export default function HomeScreen() {
           <View style={styles.modalContent}>
             {selectedPost && (
               <>
-                <Image source={{ uri: selectedPost.imageUrl }} style={styles.modalImage} />
-
+                <Image source={selectedPost.image} style={styles.modalImage} />
                 <View style={styles.modalInfo}>
                   <Text style={styles.modalUsername}>{selectedPost.username}</Text>
                   <Text style={styles.modalCaption}>{selectedPost.caption}</Text>
@@ -84,7 +101,7 @@ export default function HomeScreen() {
 
                   <View style={styles.badgeBox}>
                     <MaterialCommunityIcons name="medal" size={18} color="#fbc02d" />
-                    <Text style={styles.badgeText}>{selectedPost.eBadge}</Text>
+                    <Text style={styles.badgeText}>{selectedPost.badgeId}</Text>
                   </View>
                 </View>
 
@@ -103,24 +120,18 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
   header: { fontSize: 26, fontWeight: 'bold', padding: 16, color: '#222' },
-  card: {
-    marginHorizontal: 16,
-    marginBottom: 16,
+  imageBox: {
+    flex: 1,
+    margin: 8,
+    aspectRatio: 1,
     borderRadius: 12,
-    backgroundColor: '#fdfdfd',
-    elevation: 3,
     overflow: 'hidden',
+    backgroundColor: '#eee',
   },
-  postImage: {
+  imageThumbnail: {
     width: '100%',
-    height: 300,
+    height: '100%',
   },
-  postDetails: {
-    padding: 12,
-  },
-  username: { fontWeight: 'bold', fontSize: 16 },
-  caption: { fontSize: 14, marginVertical: 4, color: '#333' },
-  location: { fontSize: 12, color: '#777' },
   postButton: {
     position: 'absolute',
     bottom: 100,
