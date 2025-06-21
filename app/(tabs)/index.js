@@ -2,12 +2,15 @@ import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    FlatList, Image, Modal,
-    Pressable, StyleSheet,
-    Text, TouchableOpacity, View
+  FlatList, Image, Modal,
+  Pressable, StyleSheet,
+  Text, TouchableOpacity, View
 } from 'react-native';
 
+import genting from '../../assets/images/genting.jpeg';
+import gununglmalu from '../../assets/images/gunungm.jpeg';
 import ipoh from '../../assets/images/ipoh1.jpeg';
+import mountkinabalu from '../../assets/images/kinabaluu.jpeg';
 import melaka from '../../assets/images/melaka1.jpeg';
 import pd from '../../assets/images/pd1.jpeg';
 
@@ -17,7 +20,7 @@ const MOCK_POSTS = [
     image: melaka,
     username: 'alice',
     caption: 'yea',
-    location: 'mlaka',
+    location: 'melaka',
     badgeId: '🏝 melaka',
     likes: 98,
     comments: 12,
@@ -36,9 +39,39 @@ const MOCK_POSTS = [
     id: '3',
     image: ipoh,
     username: 'chloe',
-    caption: 'Culture vibes 🏯',
+    caption: 'kerenn bangettt',
     location: 'ipoh',
-    badgeId: '🏛 ipoh',
+    badgeId: 'ipoh',
+    likes: 75,
+    comments: 4,
+  },
+  {
+    id: '4',
+    image: gununglmalu,
+    username: 'kelvin',
+    caption: 'BlockDee hebatt',
+    location: 'Gunung Mulu',
+    badgeId: 'Gunung Mulu',
+    likes: 175,
+    comments: 21,
+  },
+  {
+    id: '5',
+    image: mountkinabalu,
+    username: 'anan',
+    caption: 'Yuhuuuuuuuuuuuuuuu',
+    location: 'Mount Kinabalu',
+    badgeId: 'Mount Kinabalu',
+    likes: 115,
+    comments: 9,
+  },
+  {
+    id: '6',
+    image: genting,
+    username: 'lea',
+    caption: 'genting ni bos 🏯',
+    location: 'genting',
+    badgeId: 'chan siew temple',
     likes: 75,
     comments: 9,
   }

@@ -18,6 +18,8 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "ai": "^4.3.16",
+    "axios": "^1.10.0",
+    "cloudinary": "^2.7.0",
     "expo": "~53.0.12",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",
@@ -50,5 +52,17 @@
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "description": "This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eronaeeell/Tourism.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eronaeeell/Tourism/issues"
+  },
+  "homepage": "https://github.com/Eronaeeell/Tourism#readme"
 }
