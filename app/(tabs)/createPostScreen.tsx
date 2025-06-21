@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -9,8 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  Platform
+  View
 } from 'react-native';
 import { savePost } from '../postStorage';
 import { PostType } from '../types';
@@ -58,7 +57,7 @@ const CreatePostScreen: React.FC = () => {
     await savePost(newPost);
     alert('Post created!');
     setLoading(false);
-    router.push('/post');
+    router.push('/');
   };
 
   const badges = ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu', '🎖️ Mount Kinabalu'];
