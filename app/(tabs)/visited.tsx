@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 type Location = {
   name: string;
@@ -93,21 +93,25 @@ const visitedNames = [
 const visitedLocations = LOCATIONS.filter(loc => visitedNames.includes(loc.name));
 
 export default function VisitedScreen() {
-  const navigation = useNavigation();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabContainer}>
+      <View style={styles.toggleContainer}>
         <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.navigate('badge')}
+          style={styles.toggleButton}
+          onPress={() => router.push('/badge')}
         >
-          <Text style={styles.tabText}>Badge</Text>
+          <Text style={styles.toggleText}>Badge</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.activeTab}>
-          <Text style={styles.activeTabText}>Visited</Text>
+
+        <TouchableOpacity
+          style={[styles.toggleButton, styles.activeButton]}
+        >
+          <Text style={styles.activeText}>Visited</Text>
         </TouchableOpacity>
       </View>
+
 
       <FlatList
         data={visitedLocations}
@@ -129,15 +133,61 @@ export default function VisitedScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, backgroundColor: '#eaf2ff', paddingHorizontal: 16 },
-  tabContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 30 },
-  tab: { paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, marginHorizontal: 10, backgroundColor: '#f0f0f0' },
-  activeTab: { paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, marginHorizontal: 10, backgroundColor: '#007aff' },
-  tabText: { fontSize: 16, color: '#555' },
-  activeTabText: { fontSize: 16, color: 'white', fontWeight: 'bold' },
-  card: { flexDirection: 'row', padding: 12, marginBottom: 12, backgroundColor: '#f9f9f9', borderRadius: 8, alignItems: 'center' },
-  cardImage: { width: 60, height: 60, marginRight: 12, borderRadius: 8 },
-  cardContent: { flex: 1 },
-  cardTitle: { fontSize: 16, fontWeight: 'bold' },
-  cardDate: { fontSize: 14, color: '#555', marginTop: 4 },
-  cardRating: { fontSize: 14, color: '#555', marginTop: 2 },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 30,
+    padding: 4,
+    marginBottom: 16,
+    marginTop: 20,
+  },
+  toggleButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: 'transparent'
+  },
+  activeButton: {
+    backgroundColor: '#007aff',
+  },
+  toggleText: {
+    color: '#999',
+    fontWeight: 'bold',
+  },
+  activeText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  card: {
+    flexDirection: 'row',
+    padding: 12,
+    marginBottom: 12,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    alignItems: 'center'
+  },
+  cardImage: {
+    width: 60,
+    height: 60,
+    marginRight: 12,
+    borderRadius: 8
+  },
+  cardContent: {
+    flex: 1
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  cardDate: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 4
+  },
+  cardRating: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 2
+  },
 });
