@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 const MOCK_USER = {
   username: 'BlockDee',
   email: 'blockdee@jomexplore.app',
-  badges: ['🏅 IPOH', '🏅 MELAKA', '🏅 GENTING', '🏅 PD']
+  badges: ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu','🎖️Mount Kinabalu']
 };
 
 export default function ProfileScreen() {

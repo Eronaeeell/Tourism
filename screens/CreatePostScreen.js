@@ -1,192 +1,222 @@
 import * as ImagePicker from 'expo-image-picker';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text, TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { db, storage } from '../firebaseConfig';
 
-const BADGES = ['🏅 IPOH', '🏅 MELAKA', '🏅 GENTING', ' PORT DICKSON'];
-
-export default function CreatePost() {
+export default function CreatePostScreen() {
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
-  const [username, setUsername] = useState('BlockDee');
-  const [image, setImage] = useState(null);
-  const [badgeId, setBadgeId] = useState('');
+  const [photo, setPhoto] = useState(null);
+  const [badgeId, setBadgeId] = useState('🏝 Beach Explorer');
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const username = 'BlockDee'; // mock user
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images, // ✅ Correct and supported
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    setPhoto(result.assets[0]);
+  }
+};
+
+  const uploadToCloudinary = async () => {
+  if (!photo?.uri) return null;
+
+  const formData = new FormData();
+  formData.append('file', {
+    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    type: 'image/jpeg',
+    name: 'upload.jpg',
+  });
+  formData.append('upload_preset', 'tourism_uploads');
+
+  try {
+    const res = await fetch('https://api.cloudinary.com/v1_1/duaovfxze/image/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json',
+      },
     });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    const data = await res.json();
+    console.log('Cloudinary response:', data);
+
+    if (data.secure_url) {
+      return data.secure_url;
+    } else {
+      console.error('Cloudinary error:', data);
+      return null;
     }
-  };
+  } catch (err) {
+    console.error('Upload failed:', err);
+    return null;
+  }
+};  
 
   const uploadPost = async () => {
-    if (!image || !caption || !badgeId) {
-      return Alert.alert('Missing Info', 'Please fill in all fields and pick an image.');
+    setLoading(true);
+    const imageUrl = await uploadToCloudinary();
+
+    if (!imageUrl) {
+      alert('Image upload failed');
+      setLoading(false);
+      return;
     }
 
-    const response = await fetch(image);
-    const blob = await response.blob();
-    const filename = image.substring(image.lastIndexOf('/') + 1);
-    const imageRef = ref(storage, `posts/${filename}`);
-
-    await uploadBytes(imageRef, blob);
-    const imageUrl = await getDownloadURL(imageRef);
-
-    await addDoc(collection(db, 'posts'), {
+    console.log({
       username,
       caption,
       location,
       badgeId,
       imageUrl,
-      timestamp: serverTimestamp()
     });
 
-    Alert.alert('Success', 'Post uploaded!');
-    setCaption('');
-    setLocation('');
-    setImage(null);
-    setBadgeId('');
+    alert('Post created (locally)');
+    setLoading(false);
+    router.push('/');
   };
 
+  const badges = ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu','🎖️Mount Kinabalu'];
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Create Your Adventure Post</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Create Your Adventure Post</Text>
 
       <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.imagePreview} />
+        {photo ? (
+          <Image source={{ uri: photo.uri }} style={styles.imagePreview} />
         ) : (
-          <Text style={styles.imagePickerText}>Tap to choose image</Text>
+          <Text style={styles.imageText}>📷 Tap to choose image</Text>
         )}
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Username"
-        placeholderTextColor="#aaa"
-        value={username}
-        onChangeText={setUsername}
         style={styles.input}
-      />
-      <TextInput
         placeholder="Caption your journey..."
-        placeholderTextColor="#aaa"
+        placeholderTextColor="#999"
         value={caption}
         onChangeText={setCaption}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Location (optional)"
-        placeholderTextColor="#aaa"
-        value={location}
-        onChangeText={setLocation}
-        style={styles.input}
       />
 
-      <View style={styles.badgeBox}>
-        {BADGES.map((badge) => (
+      <TextInput
+        style={styles.input}
+        placeholder="Location (optional)"
+        placeholderTextColor="#999"
+        value={location}
+        onChangeText={setLocation}
+      />
+
+      <Text style={styles.badgeLabel}>Choose your Badge:</Text>
+      <View style={styles.badgeContainer}>
+        {badges.map((badge) => (
           <TouchableOpacity
             key={badge}
-            onPress={() => setBadgeId(badge)}
             style={[
               styles.badgeButton,
-              badgeId === badge && styles.selectedBadge
+              badge === badgeId && styles.selectedBadge,
             ]}
+            onPress={() => setBadgeId(badge)}
           >
             <Text style={styles.badgeText}>{badge}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity onPress={uploadPost} style={styles.submitButton}>
-        <Text style={styles.submitText}>Post Adventure</Text>
+      <TouchableOpacity onPress={uploadPost} style={styles.postButton} disabled={loading}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.postText}>Post</Text>}
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#0a1a2f',
     padding: 20,
+    backgroundColor: '#0a1a2f',
+    flexGrow: 1,
   },
-  header: {
+  title: {
     fontSize: 22,
-    color: '#fdd835',
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 20,
-    textAlign: 'center'
   },
   imagePicker: {
-    height: 200,
-    backgroundColor: '#1f2e45',
-    borderRadius: 12,
+    backgroundColor: '#1f2f4a',
+    borderRadius: 10,
+    height: 180,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    overflow: 'hidden'
   },
-  imagePickerText: {
-    color: '#aaa',
-    fontSize: 16
+  imageText: {
+    color: '#ccc',
+    fontSize: 16,
   },
   imagePreview: {
     width: '100%',
     height: '100%',
+    borderRadius: 10,
   },
   input: {
-    backgroundColor: '#1f2e45',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    backgroundColor: '#1f2f4a',
     color: '#fff',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 12,
   },
-  badgeBox: {
+  badgeLabel: {
+    color: '#ccc',
+    fontSize: 14,
+    marginBottom: 6,
+  },
+  badgeContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 16,
-    gap: 8,
+    marginBottom: 20,
   },
   badgeButton: {
-    backgroundColor: '#1f2e45',
+    backgroundColor: '#163355',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#555',
+    borderRadius: 8,
+    marginRight: 10,
+    marginBottom: 10,
   },
   selectedBadge: {
-    borderColor: '#fdd835',
-    backgroundColor: '#26344f',
+    backgroundColor: '#1e88e5',
   },
   badgeText: {
     color: '#fff',
-    fontSize: 14,
   },
-  submitButton: {
-    backgroundColor: '#fdd835',
-    paddingVertical: 14,
-    borderRadius: 10,
+  postButton: {
+    backgroundColor: '#1e88e5',
+    padding: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    marginTop: 10,
   },
-  submitText: {
-    color: '#0a1a2f',
-    fontWeight: 'bold',
+  postText: {
+    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
