@@ -143,14 +143,14 @@ export default function HomeScreen(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
+  container: { flex: 1, backgroundColor: '#eaf2ff', paddingTop: 40 },
   headerBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#eaf2ff',
   },
   header: { fontSize: 26, fontWeight: 'bold', padding: 16, color: '#222' },
   imageBox: {
