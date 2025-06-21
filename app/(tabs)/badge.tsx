@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: '#eaf2ff',
     paddingHorizontal: 16,
   },
   tabContainer: {

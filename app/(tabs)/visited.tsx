@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Location = {
   name: string;
@@ -128,7 +128,7 @@ export default function VisitedScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 60, backgroundColor: '#fff', paddingHorizontal: 16 },
+  container: { flex: 1, paddingTop: 60, backgroundColor: '#eaf2ff', paddingHorizontal: 16 },
   tabContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 30 },
   tab: { paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, marginHorizontal: 10, backgroundColor: '#f0f0f0' },
   activeTab: { paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, marginHorizontal: 10, backgroundColor: '#007aff' },
