@@ -1,6 +1,16 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -21,38 +31,70 @@ const LOCATIONS = [
   { name: 'Bukit Cina', image: require('../../assets/badges/Bukit Cina.png') },
 ];
 
-const allBadges = LOCATIONS.map((loc, index) => ({
-  ...loc,
-  earned: index < 4, 
-}));
+export default function IndexPage() {
+  const [earnedBadgeNames, setEarnedBadgeNames] = useState([]);
 
-export default function BadgeScreen() {
-  const navigation = useNavigation();
+  useEffect(() => {
+    const loadBadges = async () => {
+      const saved = await AsyncStorage.getItem('earnedBadges');
+      if (saved) {
+        setEarnedBadgeNames(JSON.parse(saved));
+      }
+    };
+    loadBadges();
+  }, []);
 
-  const progress = allBadges.filter(badge => badge.earned).length / allBadges.length;
+  useEffect(() => {
+    const processBadgeFromURL = async () => {
+      if (Platform.OS === 'web') {
+        const url = new URL(window.location.href);
+        const badgeParam = url.searchParams.get('badge');
 
-  let medalImage;
-  if (progress >= 0.8) {
-    medalImage = goldMedal;
-  } else if (progress >= 0.5) {
-    medalImage = silverMedal;
-  } else {
-    medalImage = bronzeMedal;
-  }
+        if (badgeParam) {
+          const badgeName = decodeURIComponent(badgeParam);
+          const saved = await AsyncStorage.getItem('earnedBadges');
+          let savedList = saved ? JSON.parse(saved) : [];
+
+          if (!savedList.includes(badgeName)) {
+            savedList.push(badgeName);
+            await AsyncStorage.setItem('earnedBadges', JSON.stringify(savedList));
+            setEarnedBadgeNames(savedList);
+            Alert.alert('🎉 Badge Unlocked!', `${badgeName}`);
+          } else {
+            setEarnedBadgeNames(savedList); // ensure state stays in sync
+          }
+        }
+      }
+    };
+
+    processBadgeFromURL();
+  }, []);
+
+  const handleResetBadges = async () => {
+    await AsyncStorage.removeItem('earnedBadges');
+    setEarnedBadgeNames([]);
+    Alert.alert('Reset Complete', 'All badges have been cleared.');
+  };
+
+  const allBadges = LOCATIONS.map(loc => ({
+    ...loc,
+    earned: earnedBadgeNames.includes(loc.name),
+  }));
+
+  const progress = allBadges.filter(b => b.earned).length / allBadges.length;
+
+  let medalImage = bronzeMedal;
+  if (progress >= 0.8) medalImage = goldMedal;
+  else if (progress >= 0.5) medalImage = silverMedal;
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-          <Text style={styles.activeTabText}>Badge</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.navigate('visited')}
-        >
-          <Text style={styles.tabText}>Visited</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Small Hidden Reset Button */}
+      <TouchableOpacity style={styles.hiddenReset} onPress={handleResetBadges}>
+        <Text style={styles.hiddenResetText}>🔄</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>🏅 Your Heritage Badges</Text>
 
       <View style={styles.medalContainer}>
         <Image source={medalImage} style={styles.medalImage} resizeMode="contain" />
@@ -62,7 +104,7 @@ export default function BadgeScreen() {
         <View style={styles.progressBarBackground}>
           <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
         </View>
-        <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
+        <Text style={styles.progressText}>{Math.round(progress * 100)}% Complete</Text>
       </View>
 
       <FlatList
@@ -76,10 +118,11 @@ export default function BadgeScreen() {
               source={item.image}
               style={[
                 styles.badgeImage,
-                !item.earned && styles.unobtainedBadgeImage
+                !item.earned && styles.unobtainedBadgeImage,
               ]}
               resizeMode="contain"
             />
+            <Text style={styles.badgeLabel}>{item.name}</Text>
           </View>
         )}
       />
@@ -89,71 +132,36 @@ export default function BadgeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 60,
-    backgroundColor: '#eaf2ff',
-    paddingHorizontal: 16,
+    flex: 1, paddingTop: 60, backgroundColor: '#eaf2ff', paddingHorizontal: 16,
   },
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
+  title: {
+    fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 10,
   },
-  tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 20,
-    marginHorizontal: 10,
-    backgroundColor: '#f0f0f0',
-  },
-  activeTab: {
-    backgroundColor: '#007aff',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#555',
-  },
-  activeTabText: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  medalContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  medalImage: {
-    width: 50,
-    height: 50,
-  },
-  progressContainer: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
+  medalContainer: { alignItems: 'center', marginBottom: 10 },
+  medalImage: { width: 50, height: 50 },
+  progressContainer: { marginBottom: 20, alignItems: 'center' },
   progressBarBackground: {
-    width: SCREEN_WIDTH - 60,
-    height: 20,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 10,
-    overflow: 'hidden',
+    width: SCREEN_WIDTH - 60, height: 20, backgroundColor: '#e0e0e0', borderRadius: 10, overflow: 'hidden',
   },
   progressBarFill: {
-    height: '100%',
-    backgroundColor: '#007aff',
+    height: '100%', backgroundColor: '#007aff',
   },
-  progressText: {
-    marginTop: 6,
-    fontWeight: 'bold',
-  },
-  badgeGrid: {
-    alignItems: 'center',
-  },
+  progressText: { marginTop: 6, fontWeight: 'bold' },
+  badgeGrid: { alignItems: 'center' },
+  badgeCircle: { margin: 10, alignItems: 'center', width: 100 },
+  badgeImage: { width: 80, height: 80 },
+  unobtainedBadgeImage: { opacity: 0.3 },
+  badgeLabel: { fontSize: 12, textAlign: 'center', marginTop: 4 },
 
-  badgeImage: {
-    width: 120,
-    height: 120,
+  hiddenReset: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 4,
+    opacity: 0.2,
   },
-  unobtainedBadgeImage: {
-    opacity: 0.3,
+  hiddenResetText: {
+    fontSize: 16,
+    color: '#555',
   },
 });
