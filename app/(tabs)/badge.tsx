@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -32,7 +33,9 @@ const LOCATIONS = [
 ];
 
 export default function IndexPage() {
-  const [earnedBadgeNames, setEarnedBadgeNames] = useState([]);
+  const [earnedBadgeNames, setEarnedBadgeNames] = useState<string[]>([]);
+  const [isBadgeActive, setIsBadgeActive] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const loadBadges = async () => {
@@ -61,7 +64,7 @@ export default function IndexPage() {
             setEarnedBadgeNames(savedList);
             Alert.alert('🎉 Badge Unlocked!', `${badgeName}`);
           } else {
-            setEarnedBadgeNames(savedList); // ensure state stays in sync
+            setEarnedBadgeNames(savedList);
           }
         }
       }
@@ -89,7 +92,23 @@ export default function IndexPage() {
 
   return (
     <View style={styles.container}>
-      {/* Small Hidden Reset Button */}
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleButton, styles.activeButton]}
+        >
+          <Text style={styles.activeText}>Badge</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={() => router.push('/visited')}
+        >
+          <Text style={styles.inactiveText}>Visited</Text>
+        </TouchableOpacity>
+      </View>
+
+
+
       <TouchableOpacity style={styles.hiddenReset} onPress={handleResetBadges}>
         <Text style={styles.hiddenResetText}>🔄</Text>
       </TouchableOpacity>
@@ -134,6 +153,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1, paddingTop: 60, backgroundColor: '#eaf2ff', paddingHorizontal: 16,
   },
+  topRightButtons: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+  },
+  navButton: {
+    backgroundColor: '#007aff',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    marginLeft: 6,
+  },
+  navButtonText: {
+    color: '#fff',
+    fontSize: 12,
+  },
   title: {
     fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 10,
   },
@@ -152,11 +188,10 @@ const styles = StyleSheet.create({
   badgeImage: { width: 80, height: 80 },
   unobtainedBadgeImage: { opacity: 0.3 },
   badgeLabel: { fontSize: 12, textAlign: 'center', marginTop: 4 },
-
   hiddenReset: {
     position: 'absolute',
     top: 10,
-    right: 10,
+    left: 10,
     padding: 4,
     opacity: 0.2,
   },
@@ -164,4 +199,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
   },
+  toggleContainer: {
+  flexDirection: 'row',
+  alignSelf: 'center',
+  backgroundColor: '#f0f0f0',
+  borderRadius: 30,
+  padding: 4,
+  marginBottom: 16,
+  marginTop: 20,
+},
+toggleButton: {
+  paddingVertical: 6,
+  paddingHorizontal: 20,
+  borderRadius: 20,
+},
+activeButton: {
+  backgroundColor: '#007aff',
+},
+inactiveButton: {
+  backgroundColor: 'transparent',
+},
+activeText: {
+  color: '#fff',
+  fontWeight: 'bold',
+},
+inactiveText: {
+  color: '#999',
+  fontWeight: 'bold',
+},
+
 });
