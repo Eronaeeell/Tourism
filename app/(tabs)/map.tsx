@@ -21,6 +21,21 @@ type Location = {
 };
 
 const LOCATIONS: Location[] = [
+{
+    name: 'Batu Caves',
+    query: 'Batu Caves, Malaysia',
+    description: 'Famous limestone hill with a series of caves and temples.',
+    longDescription: 'Batu Caves is a renowned Hindu temple complex set in limestone caves, featuring a towering golden statue of Lord Murugan and vibrant cultural festivals.',
+    image: require('../../assets/images/batu-caves.jpg')
+  },
+  {
+    name: 'Chin Swee Temple',
+    query: 'Chin Swee Caves Temple, Malaysia',
+    description: 'Scenic temple located in Genting Highlands.',
+    longDescription: 'Chin Swee Caves Temple is a majestic Taoist temple nestled on a cliff in Genting Highlands, offering stunning mountain views and intricate architectural details.',
+    image: require('../../assets/images/chin-swee-temple.jpg')
+  },
+
   {
     name: 'Gunung Mulu National Park',
     query: 'Gunung Mulu National Park, Malaysia',
@@ -231,7 +246,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#f0f0f0',
     borderRadius: 8,
-    marginRight: 30,
+    marginHorizontal: 25,
     overflow: 'hidden',
     padding: 10,
     height: 140,
