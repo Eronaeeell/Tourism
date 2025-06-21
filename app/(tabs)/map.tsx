@@ -215,7 +215,11 @@ const MapScreen: React.FC = () => {
           renderItem={({ item }) => (
             <HoverableWrapper item={item}>
               <TouchableOpacity
-                style={[styles.card, { width: CARD_WIDTH }]}
+                style={[
+                  styles.card,
+                  { width: CARD_WIDTH },
+                  selected.name === item.name ? { backgroundColor: '#add8e6' } : { backgroundColor: '#f0f0f0' }
+                ]}
                 onPress={() => setSelected(item)}
               >
                 <Image source={item.image} style={styles.image} />
@@ -226,6 +230,7 @@ const MapScreen: React.FC = () => {
               </TouchableOpacity>
             </HoverableWrapper>
           )}
+
         />
 
         <TouchableOpacity style={styles.scrollButton} onPress={() => scrollBy('right')}>
