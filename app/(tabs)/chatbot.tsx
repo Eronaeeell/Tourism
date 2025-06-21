@@ -19,7 +19,7 @@ export default function ChatbotScreen() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Hi there! I’m your Malaysian travel buddy 🇲🇾. Ask me anything about your itinerary!',
+      text: 'Hi there! I’m your Malaysian travel buddy 🇲🇾. JOMExplore!',
     },
   ]);
   const [input, setInput] = useState('');
@@ -49,7 +49,7 @@ export default function ChatbotScreen() {
             {
               role: 'system',
               content:
-                'You are a helpful and friendly Malaysian travel assistant. Help tourists plan fun, safe, and exciting itineraries in Malaysia. Keep itinerary answers short and only reply with a table format when appropriate.',
+                'You are a helpful and friendly Malaysian travel assistant. Help tourists plan fun, safe, and exciting itineraries, and know Malaysia Heritag well. Keep answers short and only reply with a table format when appropriate.',
             },
             ...newMessages.map((msg) => ({
               role: msg.sender === 'user' ? 'user' : 'assistant',
