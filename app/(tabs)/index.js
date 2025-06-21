@@ -1,99 +1,116 @@
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
-  FlatList,
-  Image,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    FlatList, Image, Modal,
+    Pressable, StyleSheet,
+    Text, TouchableOpacity, View
 } from 'react-native';
-import { clearPosts, loadPosts } from '../postStorage'; // adjust if needed
 
+import genting from '../../assets/images/genting.jpeg';
+import gununglmalu from '../../assets/images/gunungm.jpeg';
+import ipoh from '../../assets/images/ipoh1.jpeg';
+import mountkinabalu from '../../assets/images/kinabaluu.jpeg';
+import melaka from '../../assets/images/melaka1.jpeg';
+import pd from '../../assets/images/pd1.jpeg';
 
+const MOCK_POSTS = [
+  {
+    id: '1',
+    image: melaka,
+    username: 'alice',
+    caption: 'yea',
+    location: 'melaka',
+    badgeId: '🏝 melaka',
+    likes: 98,
+    comments: 12,
+  },
+  {
+    id: '2',
+    image: pd,
+    username: 'bob',
+    caption: 'Peak life 🏔',
+    location: 'port dickson',
+    badgeId: '🥾 pd',
+    likes: 120,
+    comments: 33,
+  },
+  {
+    id: '3',
+    image: ipoh,
+    username: 'chloe',
+    caption: 'kerenn bangettt',
+    location: 'ipoh',
+    badgeId: 'ipoh',
+    likes: 75,
+    comments: 4,
+  },
+  {
+    id: '4',
+    image: gununglmalu,
+    username: 'kelvin',
+    caption: 'BlockDee hebatt',
+    location: 'Gunung Mulu',
+    badgeId: 'Gunung Mulu',
+    likes: 175,
+    comments: 21,
+  },
+  {
+    id: '5',
+    image: mountkinabalu,
+    username: 'anan',
+    caption: 'Yuhuuuuuuuuuuuuuuu',
+    location: 'Mount Kinabalu',
+    badgeId: 'Mount Kinabalu',
+    likes: 115,
+    comments: 9,
+  },
+  {
+    id: '6',
+    image: genting,
+    username: 'lea',
+    caption: 'genting ni bos 🏯',
+    location: 'genting',
+    badgeId: 'chan siew temple',
+    likes: 75,
+    comments: 9,
+  }
+];
 
-// Post type
-type PostType = {
-  id: string;
-  image?: any; // for static asset mock
-  imageUrl?: string; // for dynamic uri
-  username: string;
-  caption: string;
-  location: string;
-  badgeId: string;
-  likes?: number;
-  comments?: number;
-};
-
-
-export default function HomeScreen(): JSX.Element {
-  const [posts, setPosts] = useState<PostType[]>([]);
-  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+export default function HomeScreen() {
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
   const router = useRouter();
+  
 
-  useFocusEffect(
-    useCallback(() => {
-      const load = async () => {
-        const stored = await loadPosts();
-        setPosts([...stored]);
-      };
-      load();
-    }, [])
+  useEffect(() => {
+    setPosts(MOCK_POSTS);
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.imageBox} onPress={() => setSelectedPost(item)}>
+      <Image source={item.image} style={styles.imageThumbnail} />
+    </TouchableOpacity>
   );
-  const handleClearPosts = async () => {
-    await clearPosts();
-    setPosts([]);
-    alert('All posts cleared!');
-  };
-  const getPaddedPosts = (posts: PostType[]) => {
-    if (posts.length % 2 === 1) {
-      return [...posts, { id: 'dummy', username: '', caption: '', location: '', badgeId: '', imageUrl: '', image: null }];
-    }
-    return posts;
-  };
-
-  const renderItem = ({ item }: { item: PostType }) => {
-    if (item.id === 'dummy') {
-      return <View style={[styles.imageBox, { backgroundColor: 'transparent' }]} />;
-    }
-
-    return (
-      <TouchableOpacity style={styles.imageBox} onPress={() => setSelectedPost(item)}>
-        <Image
-          source={item.image ? item.image : { uri: item.imageUrl }}
-          style={styles.imageThumbnail}
-        />
-      </TouchableOpacity>
-    );
-  };
-
 
   return (
     <View style={styles.container}>
       <View style={styles.headerBar}>
         <Text style={styles.header}>JomExplore</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {/* <TouchableOpacity onPress={handleClearPosts} style={styles.clearButton}>
-            <Feather name="trash-2" size={20} color="#e53935" />
-          </TouchableOpacity> */}
-          <TouchableOpacity onPress={() => router.push('/profile')}>
-            <Feather name="user" size={24} color="#222" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/profile')}>
+        <Feather name="user" size={24} color="#222" />
+  </TouchableOpacity>
         </View>
-      </View>
-
+        
       <FlatList
-        data={getPaddedPosts(posts)}
+        data={posts}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         numColumns={2}
         contentContainerStyle={{ paddingBottom: 120 }}
       />
 
-      <TouchableOpacity style={styles.postButton} onPress={() => router.push('/createPostScreen')}>
+      <TouchableOpacity style={styles.postButton} onPress={() => router.push('createPostScreen')}>
         <Text style={styles.postButtonText}>＋ Post</Text>
       </TouchableOpacity>
 
@@ -107,10 +124,7 @@ export default function HomeScreen(): JSX.Element {
           <View style={styles.modalContent}>
             {selectedPost && (
               <>
-                <Image
-                  source={selectedPost.image ? selectedPost.image : { uri: selectedPost.imageUrl }}
-                  style={styles.modalImage}
-                />
+                <Image source={selectedPost.image} style={styles.modalImage} />
                 <View style={styles.modalInfo}>
                   <Text style={styles.modalUsername}>{selectedPost.username}</Text>
                   <Text style={styles.modalCaption}>{selectedPost.caption}</Text>
@@ -143,15 +157,16 @@ export default function HomeScreen(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
   headerBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  paddingVertical: 10,
+  backgroundColor: '#fff',
+},
+
+    container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
   header: { fontSize: 26, fontWeight: 'bold', padding: 16, color: '#222' },
   imageBox: {
     flex: 1,
