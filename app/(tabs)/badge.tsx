@@ -4,7 +4,6 @@ import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-// Placeholder medal images (update paths as needed)
 const goldMedal = require('../../assets/images/gold-badge.png');
 const silverMedal = require('../../assets/images/silver-badge.jpg');
 const bronzeMedal = require('../../assets/images/bronze-badge.webp');
@@ -24,7 +23,7 @@ const LOCATIONS = [
 
 const allBadges = LOCATIONS.map((loc, index) => ({
   ...loc,
-  earned: index < 4, // First 4 are obtained
+  earned: index < 4, 
 }));
 
 export default function BadgeScreen() {

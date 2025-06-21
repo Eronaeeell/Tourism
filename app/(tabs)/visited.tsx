@@ -7,7 +7,7 @@ type Location = {
   query: string;
   description: string;
   longDescription: string;
-  image: any; // since require returns number
+  image: any;
 };
 
 const LOCATIONS: Location[] = [

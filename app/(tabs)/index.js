@@ -2,9 +2,9 @@ import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    FlatList, Image, Modal,
-    Pressable, StyleSheet,
-    Text, TouchableOpacity, View
+  FlatList, Image, Modal,
+  Pressable, StyleSheet,
+  Text, TouchableOpacity, View
 } from 'react-native';
 
 import ipoh from '../../assets/images/ipoh1.jpeg';

@@ -52,10 +52,7 @@ export default function LeaderboardScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🎮 Leaderboard Arena</Text>
-
-      {/* Top 3 */}
       <View style={styles.topThreeContainer}>
-        {/* 2nd */}
         <View style={styles.topUser}>
           <Image source={{ uri: top2.avatar }} style={getTopAvatarStyle(70, '#C0C0C0')} />
           <Text style={[styles.topName, { color: getMedalColor(2) }]}>🥈 {top2.name}</Text>
@@ -63,7 +60,6 @@ export default function LeaderboardScreen() {
           <Text style={styles.rewardLabel}>🎁 Token of appreciation</Text>
         </View>
 
-        {/* 1st */}
         <View style={styles.topUser}>
           <Image source={{ uri: top1.avatar }} style={getTopAvatarStyle(90, '#FFD700')} />
           <Text style={[styles.topName, { color: getMedalColor(1) }]}>👑 {top1.name}</Text>
@@ -71,7 +67,6 @@ export default function LeaderboardScreen() {
           <Text style={styles.rewardLabel}>🏆 Experience Wau</Text>
         </View>
 
-        {/* 3rd */}
         <View style={styles.topUser}>
           <Image source={{ uri: top3.avatar }} style={getTopAvatarStyle(70, '#CD7F32')} />
           <Text style={[styles.topName, { color: getMedalColor(3) }]}>🥉 {top3.name}</Text>
@@ -80,7 +75,6 @@ export default function LeaderboardScreen() {
         </View>
       </View>
 
-      {/* Remaining Users */}
       <FlatList
         data={rest}
         keyExtractor={(item) => item.rank.toString()}
@@ -99,7 +93,6 @@ export default function LeaderboardScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       />
 
-      {/* Spacer to stay above tab bar */}
       <View style={{ height: 80 }} />
     </View>
   );
