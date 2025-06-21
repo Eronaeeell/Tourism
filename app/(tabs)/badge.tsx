@@ -1,24 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const badgeImage = require('../../assets/images/badge-batu-caves.png');
 
-// Placeholder medal images (update paths later)
+// Placeholder medal images (update paths as needed)
 const goldMedal = require('../../assets/images/gold-badge.png');
 const silverMedal = require('../../assets/images/silver-badge.jpg');
 const bronzeMedal = require('../../assets/images/bronze-badge.webp');
 
+const LOCATIONS = [
+  { name: 'Batu Caves', image: require('../../assets/badges/badge-batu-caves.png') },
+  { name: 'Chin Swee Temple', image: require('../../assets/badges/chin swee temple.png') },
+  { name: 'Gunung Mulu National Park', image: require('../../assets/badges/Gunung Mulu.png') },
+  { name: 'Mount Kinabalu', image: require('../../assets/badges/Mount Kinabalu.png') },
+  { name: 'George Town', image: require('../../assets/badges/George Town.png') },
+  { name: 'Melaka Sultanate Palace Museum', image: require('../../assets/badges/Melaka Sultanate Palace Museum.png') },
+  { name: 'Niah National Park', image: require('../../assets/badges/Niah National Park.png') },
+  { name: 'Sultan Abdul Samad Building', image: require('../../assets/badges/Sultan Abdul Samad.png') },
+  { name: 'Lenggong Valley', image: require('../../assets/badges/Lenggong Valley.png') },
+  { name: 'Bukit Cina', image: require('../../assets/badges/Bukit Cina.png') },
+];
+
+const allBadges = LOCATIONS.map((loc, index) => ({
+  ...loc,
+  earned: index < 4, // First 4 are obtained
+}));
+
 export default function BadgeScreen() {
-  const [tab, setTab] = useState<'badge' | 'visited'>('badge');
   const navigation = useNavigation();
 
-  const obtainedBadges = Array(6).fill({ id: '', earned: true });
-  const unobtainedBadges = Array(6).fill({ id: '', earned: false });
-  const allBadges = [...obtainedBadges, ...unobtainedBadges];
-
-  const progress = obtainedBadges.length / allBadges.length;
+  const progress = allBadges.filter(badge => badge.earned).length / allBadges.length;
 
   let medalImage;
   if (progress >= 0.8) {
@@ -32,9 +44,7 @@ export default function BadgeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, styles.activeTab]}
-        >
+        <TouchableOpacity style={[styles.tab, styles.activeTab]}>
           <Text style={styles.activeTabText}>Badge</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -60,11 +70,11 @@ export default function BadgeScreen() {
         contentContainerStyle={styles.badgeGrid}
         data={allBadges}
         numColumns={3}
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
           <View style={styles.badgeCircle}>
             <Image
-              source={badgeImage}
+              source={item.image}
               style={[
                 styles.badgeImage,
                 !item.earned && styles.unobtainedBadgeImage
@@ -77,7 +87,6 @@ export default function BadgeScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -106,6 +115,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   activeTabText: {
+    fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
   },
@@ -139,15 +149,7 @@ const styles = StyleSheet.create({
   badgeGrid: {
     alignItems: 'center',
   },
-  badgeCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-  },
+
   badgeImage: {
     width: 120,
     height: 120,
