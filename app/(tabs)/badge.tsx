@@ -31,15 +31,8 @@ const LOCATIONS = [
   { name: 'Bukit Cina', image: require('../../assets/badges/Bukit Cina.png') },
 ];
 
-<<<<<<< HEAD
 export default function IndexPage() {
   const [earnedBadgeNames, setEarnedBadgeNames] = useState([]);
-=======
-const allBadges = LOCATIONS.map((loc, index) => ({
-  ...loc,
-  earned: index < 4, 
-}));
->>>>>>> 88fa0fe0275ba1aebc6f491061e93f7497ea6c1e
 
   useEffect(() => {
     const loadBadges = async () => {
@@ -83,10 +76,10 @@ const allBadges = LOCATIONS.map((loc, index) => ({
     Alert.alert('Reset Complete', 'All badges have been cleared.');
   };
 
-  // const allBadges = LOCATIONS.map(loc => ({
-  //   ...loc,
-  //   earned: earnedBadgeNames.includes(loc.name),
-  // }));
+  const allBadges = LOCATIONS.map(loc => ({
+    ...loc,
+    earned: earnedBadgeNames.includes(loc.name),
+  }));
 
   const progress = allBadges.filter(b => b.earned).length / allBadges.length;
 

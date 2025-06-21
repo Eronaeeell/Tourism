@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 export default function ChatbotScreen() {
   const [messages, setMessages] = useState([
     {
@@ -185,6 +184,19 @@ export default function ChatbotScreen() {
             contentContainerStyle={{ padding: 16, paddingBottom: 160 }}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
           >
+            {/* Title */}
+            <Text
+              style={{
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: '#007aff',
+                marginBottom: 16,
+                alignSelf: 'center',
+              }}
+            >
+              JomAI
+            </Text>
+
             {messages.map((msg, index) => renderMessage(msg, index))}
             {loading && (
               <View
@@ -194,7 +206,8 @@ export default function ChatbotScreen() {
                   borderRadius: 16,
                   backgroundColor: '#e5e5ea',
                   marginBottom: 10,
-                }}>
+                }}
+              >
                 <ActivityIndicator size="small" color="#333" />
               </View>
             )}
