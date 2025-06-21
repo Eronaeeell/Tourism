@@ -6,7 +6,6 @@ import { db } from '../firebaseConfig';
 export default function ProfileScreen() {
   const [badges, setBadges] = useState([]);
 
-  // Replace with real user ID in production
   const username = 'tourist123';
 
   useEffect(() => {

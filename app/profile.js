@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 const MOCK_USER = {
   username: 'BlockDee',
   email: 'blockdee@jomexplore.app',
-  badges: ['🏅 IPOH', '🏅 MELAKA', '🏅 GENTING', '🏅 PD']
+  badges: ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu','🎖️Mount Kinabalu']
 };
 
 export default function ProfileScreen() {
@@ -13,7 +13,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Top bar */}
       <View style={styles.headerBar}>
         <Text style={styles.title}>My Profile</Text>
         <TouchableOpacity onPress={() => router.back()}>
@@ -21,14 +20,12 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* User Info */}
       <View style={styles.userBox}>
         <Feather name="user" size={40} color="#fdd835" />
         <Text style={styles.username}>{MOCK_USER.username}</Text>
         <Text style={styles.email}>{MOCK_USER.email}</Text>
       </View>
 
-      {/* E-badges */}
       <Text style={styles.badgeTitle}>My E-Badges</Text>
       <FlatList
         data={MOCK_USER.badges}
@@ -42,7 +39,6 @@ export default function ProfileScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       />
 
-      {/* Logout Button (placeholder) */}
       <TouchableOpacity style={styles.logoutButton}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>

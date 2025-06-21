@@ -107,7 +107,7 @@ export default function ChatbotScreen() {
             maxWidth: '100%',
           }}
         >
-          <Text style={{ fontWeight: 'bold', marginBottom: 6 }}>🗓️ Itinerary:</Text>
+          <Text style={{ fontWeight: 'bold', marginBottom: 6 }}>🗓 Itinerary:</Text>
 
           {/* Header Row */}
           <View style={{ flexDirection: 'row', marginBottom: 6 }}>
@@ -152,7 +152,6 @@ export default function ChatbotScreen() {
       );
     }
 
-    // Default chat bubble
     return (
       <View
         key={index}
@@ -166,89 +165,83 @@ export default function ChatbotScreen() {
         }}
       >
         <Text style={{ color: msg.sender === 'user' ? 'white' : 'black' }}>
-          {msg.text.replace(/\*\*/g, '').replace(/[*_`\\]/g, '')}
+          {msg.text.replace(/\\/g, '').replace(/[*_`\\]/g, '')}
         </Text>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#eaf2ff' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 60}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
-            <ScrollView
-              ref={scrollRef}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ padding: 16, paddingBottom: 160 }}
-              style={{ flex: 1 }}
-              onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
-            >
-              {messages.map((msg, index) => renderMessage(msg, index))}
-
-              {loading && (
-                <View
-                  style={{
-                    alignSelf: 'flex-start',
-                    padding: 10,
-                    borderRadius: 16,
-                    backgroundColor: '#e5e5ea',
-                    marginBottom: 10,
-                  }}
-                >
-                  <ActivityIndicator size="small" color="#333" />
-                </View>
-              )}
-            </ScrollView>
-
-            <View
-  style={{
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 100, // Increased from 20 to 100 to move above footer
-    backgroundColor: '#fff',
-    borderRadius: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 6,
-  }}
->
-  <TextInput
-    placeholder="Ask about your Malaysia trip..."
-    value={input}
-    onChangeText={setInput}
-    onSubmitEditing={sendMessage}
-    multiline
-    blurOnSubmit={false}
-    style={{
-      flex: 1,
-      minHeight: 40,
-      maxHeight: 100,
-      borderRadius: 20,
-      paddingHorizontal: 16,
-      backgroundColor: '#f0f0f0',
-      paddingTop: 10,
-      paddingBottom: 10,
-    }}
-  />
-  <Pressable onPress={sendMessage} style={{ marginLeft: 10 }}>
-    <Ionicons name="send" size={24} color="#007aff" />
-  </Pressable>
-</View>
-
-          </View>
+          <ScrollView
+            ref={scrollRef}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ padding: 16, paddingBottom: 160 }}
+            onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+          >
+            {messages.map((msg, index) => renderMessage(msg, index))}
+            {loading && (
+              <View
+                style={{
+                  alignSelf: 'flex-start',
+                  padding: 10,
+                  borderRadius: 16,
+                  backgroundColor: '#e5e5ea',
+                  marginBottom: 10,
+                }}>
+                <ActivityIndicator size="small" color="#333" />
+              </View>
+            )}
+          </ScrollView>
         </TouchableWithoutFeedback>
+
+        <View
+          style={{
+            position: 'absolute',
+            left: 16,
+            right: 16,
+            bottom: 100,
+            backgroundColor: '#fff',
+            borderRadius: 30,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 6,
+          }}
+        >
+          <TextInput
+            placeholder="Ask about your Malaysia trip..."
+            value={input}
+            onChangeText={setInput}
+            onSubmitEditing={sendMessage}
+            multiline
+            blurOnSubmit={false}
+            style={{
+              flex: 1,
+              minHeight: 40,
+              maxHeight: 100,
+              borderRadius: 20,
+              paddingHorizontal: 16,
+              backgroundColor: '#f0f0f0',
+              paddingTop: 10,
+              paddingBottom: 10,
+            }}
+          />
+          <Pressable onPress={sendMessage} style={{ marginLeft: 10 }}>
+            <Ionicons name="send" size={24} color="#007aff" />
+          </Pressable>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
