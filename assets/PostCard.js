@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, Modal, Button } from "react-native";
+import { useState } from "react";
+import { Button, Image, Modal, Text, TouchableOpacity, View } from "react-native";
 
 const PostCard = ({ post }) => {
   const [modalVisible, setModalVisible] = useState(false);

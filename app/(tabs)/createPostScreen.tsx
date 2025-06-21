@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -79,6 +80,10 @@ const CreatePostScreen: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Feather name="arrow-left" size={24} color="#333" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Create Your Adventure Post</Text>
 
       <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
@@ -92,7 +97,7 @@ const CreatePostScreen: React.FC = () => {
       <TextInput
         style={styles.input}
         placeholder="Caption your journey..."
-        placeholderTextColor="#999"
+        placeholderTextColor="#777"
         value={caption}
         onChangeText={setCaption}
       />
@@ -100,29 +105,25 @@ const CreatePostScreen: React.FC = () => {
       <TextInput
         style={styles.input}
         placeholder="Location (optional)"
-        placeholderTextColor="#999"
+        placeholderTextColor="#777"
         value={location}
         onChangeText={setLocation}
       />
 
       <Text style={styles.badgeLabel}>Choose your Badge:</Text>
       <View style={styles.badgeContainer}>
-        {badges.length > 0 ? (
-          badges.map((badge) => (
-            <TouchableOpacity
-              key={badge}
-              style={[
-                styles.badgeButton,
-                badge === badgeId && styles.selectedBadge
-              ]}
-              onPress={() => setBadgeId(badge)}
-            >
-              <Text style={styles.badgeText}>{badge}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={{ color: '#999' }}>No badges unlocked yet.</Text>
-        )}
+        {badges.map((badge) => (
+          <TouchableOpacity
+            key={badge}
+            style={[
+              styles.badgeButton,
+              badge === badgeId && styles.selectedBadge
+            ]}
+            onPress={() => setBadgeId(badge)}
+          >
+            <Text style={styles.badgeText}>{badge}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <TouchableOpacity onPress={uploadPost} style={styles.postButton} disabled={loading}>
@@ -137,25 +138,31 @@ export default CreatePostScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#0a1a2f',
+    backgroundColor: '#f5f7fa',
     flexGrow: 1
+  },
+  backButton: {
+    marginBottom: 10,
+    alignSelf: 'flex-start'
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#222',
     marginBottom: 20
   },
   imagePicker: {
-    backgroundColor: '#1f2f4a',
+    backgroundColor: '#e0eafc',
     borderRadius: 10,
     height: 180,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#cbd8f0'
   },
   imageText: {
-    color: '#ccc',
+    color: '#555',
     fontSize: 16
   },
   imagePreview: {
@@ -164,14 +171,16 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   input: {
-    backgroundColor: '#1f2f4a',
-    color: '#fff',
+    backgroundColor: '#fff',
+    color: '#222',
     padding: 12,
     borderRadius: 10,
-    marginBottom: 12
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ddd'
   },
   badgeLabel: {
-    color: '#ccc',
+    color: '#444',
     fontSize: 14,
     marginBottom: 6
   },
@@ -181,18 +190,21 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   badgeButton: {
-    backgroundColor: '#163355',
+    backgroundColor: '#dde9fb',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginRight: 10,
-    marginBottom: 10
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#c3d4f0'
   },
   selectedBadge: {
-    backgroundColor: '#1e88e5'
+    backgroundColor: '#1e88e5',
+    borderColor: '#1e88e5'
   },
   badgeText: {
-    color: '#fff'
+    color: '#1e1e1e'
   },
   postButton: {
     backgroundColor: '#1e88e5',

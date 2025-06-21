@@ -1,15 +1,37 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import {
+    FlatList,
+    ListRenderItemInfo,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
-const MOCK_USER = {
-  username: 'BlockDee',
-  email: 'blockdee@jomexplore.app',
-  badges: ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu','🎖️Mount Kinabalu']
+// Define user type (optional for expansion)
+type User = {
+  username: string;
+  email: string;
+  badges: string[];
 };
 
-export default function ProfileScreen() {
+const MOCK_USER: User = {
+  username: 'BlockDee',
+  email: 'blockdee@jomexplore.app',
+  badges: ['🎖️ Batu Caves', '🎖️ Chin Swee Temple', '🎖️ Gunung Mulu', '🎖️ Mount Kinabalu']
+};
+
+export default function ProfileScreen(): JSX.Element {
   const router = useRouter();
+
+  const renderBadgeItem = ({ item }: ListRenderItemInfo<string>) => (
+    <View style={styles.badgeItem}>
+      <MaterialCommunityIcons name="medal" size={18} color="#fbc02d" />
+      <Text style={styles.badgeText}>{item}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -26,13 +48,8 @@ export default function ProfileScreen() {
       <Text style={styles.badgeTitle}>My E-Badges</Text>
       <FlatList
         data={MOCK_USER.badges}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.badgeItem}>
-            <MaterialCommunityIcons name="medal" size={18} color="#fbc02d" />
-            <Text style={styles.badgeText}>{item}</Text>
-          </View>
-        )}
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={renderBadgeItem}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
 
