@@ -1,7 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { Platform, View, Text, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  Animated,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
-import { Animated } from 'react-native';
 
 type Location = {
   name: string;
@@ -94,7 +103,7 @@ const MapScreen: React.FC = () => {
   const [hoveredLocation, setHoveredLocation] = useState<Location | null>(null);
   const [hoverBoxPosition, setHoverBoxPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const flatListRef = useRef<FlatList>(null);
-  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const cardRefs = useRef<Record<string, any>>({});
   const [fadeAnim] = useState(new Animated.Value(0));
 
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyAxL0a_KsN7iTGqnjxqCDkLxENyUBhZT4I&q=${encodeURIComponent(selected.query)}`;
@@ -103,17 +112,13 @@ const MapScreen: React.FC = () => {
     const cardEl = cardRefs.current[item.name];
     if (cardEl) {
       const rect = cardEl.getBoundingClientRect();
-
       fadeAnim.stopAnimation(() => {
         fadeAnim.setValue(0);
-      
         setHoverBoxPosition({
           x: rect.left + rect.width / 2 - 110,
           y: rect.top - 60,
         });
-
         setHoveredLocation(item);
-
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 300,
@@ -135,15 +140,32 @@ const MapScreen: React.FC = () => {
     });
   };
 
-
   const scrollBy = (direction: 'left' | 'right') => {
     if (flatListRef.current) {
+      const offset = (flatListRef.current as any)._listRef._scrollMetrics.offset;
       flatListRef.current.scrollToOffset({
         offset: direction === 'left'
-          ? Math.max(0, flatListRef.current._listRef._scrollMetrics.offset - CARD_WIDTH - 45)
-          : flatListRef.current._listRef._scrollMetrics.offset + CARD_WIDTH + 45,
+          ? Math.max(0, offset - CARD_WIDTH - 10)
+          : offset + CARD_WIDTH + 10,
         animated: true,
       });
+    }
+  };
+
+  const HoverableWrapper = ({ children, item }: { children: React.ReactNode; item: Location }) => {
+    if (Platform.OS === 'web') {
+      return (
+        <div
+          ref={(el) => { cardRefs.current[item.name] = el }}
+          onMouseEnter={() => handleMouseEnter(item)}
+          onMouseLeave={handleMouseLeave}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          {children}
+        </div>
+      );
+    } else {
+      return <View>{children}</View>;
     }
   };
 
@@ -155,25 +177,27 @@ const MapScreen: React.FC = () => {
             src={mapUrl}
             style={{ width: '100%', height: '100%', border: 0 }}
             allowFullScreen
-          ></iframe>
+          />
         ) : (
           <WebView source={{ uri: mapUrl }} style={{ flex: 1 }} />
         )}
       </View>
 
       {hoveredLocation && (
-      <Animated.View style={[
-          styles.floatingBox,
-          {
-          position: 'fixed',
-          top: hoverBoxPosition.y,
-          left: hoverBoxPosition.x,
-          opacity: fadeAnim,
-          }
-      ]}>
+        <Animated.View
+          style={[
+            styles.floatingBox,
+            {
+              position: 'fixed',
+              top: hoverBoxPosition.y,
+              left: hoverBoxPosition.x,
+              opacity: fadeAnim,
+            }
+          ]}
+        >
           <Text style={styles.floatingBoxTitle}>{hoveredLocation.name}</Text>
           <Text style={styles.floatingBoxText}>{hoveredLocation.longDescription}</Text>
-      </Animated.View>
+        </Animated.View>
       )}
 
       <View style={[styles.cardContainer, { marginBottom: 100 }]}>
@@ -189,23 +213,18 @@ const MapScreen: React.FC = () => {
           contentContainerStyle={{ paddingHorizontal: 5 }}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
-            <div
-              ref={(el) => { cardRefs.current[item.name] = el }}
-              onMouseEnter={() => handleMouseEnter(item)}
-              onMouseLeave={() => handleMouseLeave()}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
+            <HoverableWrapper item={item}>
               <TouchableOpacity
                 style={[styles.card, { width: CARD_WIDTH }]}
                 onPress={() => setSelected(item)}
               >
-                <Image source={ item.image } style={styles.image} />
+                <Image source={item.image} style={styles.image} />
                 <View style={{ paddingHorizontal: 4 }}>
                   <Text style={styles.cardTitle}>{item.name}</Text>
                   <Text style={styles.cardDesc}>{item.description}</Text>
                 </View>
               </TouchableOpacity>
-            </div>
+            </HoverableWrapper>
           )}
         />
 
