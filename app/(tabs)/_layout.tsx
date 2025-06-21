@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const tabs = [
-  { name: 'index', icon: 'camera-outline', label: 'Post' },
+  { name: 'post', icon: 'camera-outline', label: 'Post' },
   { name: 'chatbot', icon: 'chatbubbles-outline', label: 'Chatbot' },
   { name: 'map', icon: 'map-outline', label: 'Map' },
   { name: 'badge', icon: 'ribbon-outline', label: 'Badge' },
