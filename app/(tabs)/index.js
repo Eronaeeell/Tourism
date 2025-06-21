@@ -48,6 +48,7 @@ export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const router = useRouter();
+  
 
   useEffect(() => {
     setPosts(MOCK_POSTS);
@@ -61,8 +62,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>JomExplore</Text>
-
+      <View style={styles.headerBar}>
+        <Text style={styles.header}>JomExplore</Text>
+        <TouchableOpacity onPress={() => router.push('/profile')}>
+        <Feather name="user" size={24} color="#222" />
+  </TouchableOpacity>
+        </View>
+        
       <FlatList
         data={posts}
         renderItem={renderItem}
@@ -118,7 +124,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
+  headerBar: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  paddingVertical: 10,
+  backgroundColor: '#fff',
+},
+
+    container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
   header: { fontSize: 26, fontWeight: 'bold', padding: 16, color: '#222' },
   imageBox: {
     flex: 1,

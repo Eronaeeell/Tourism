@@ -5,7 +5,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyACLwfrs7fOPBFEBbZTI4MiGWbTGn10haM",
   authDomain: "tourism-3cb2e.firebaseapp.com",
   projectId: "tourism-3cb2e",
-  storageBucket: "tourism-3cb2e.firebasestorage.com",
+  storageBucket: "tourism-3cb2e.appspot.com",
   messagingSenderId: "751462981792",
   appId: "1:751462981792:web:9608aa7d1e3815466429c5",
   measurementId: "G-38ZHTY26HV"
