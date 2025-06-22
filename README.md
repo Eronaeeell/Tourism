@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# 🌏 JomExplore: A Gamified NFC Tourism App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+JomExplore is a mobile tourism app designed to make exploring Malaysia’s heritage sites fun and rewarding. By scanning NFC tags at physical locations like Batu Caves or Mount Kinabalu, users unlock exclusive e-badges, collect digital souvenirs, and share their journey through an Instagram-style feed. The app gamifies local travel, encourages cultural appreciation, and builds a community of explorers — one badge at a time.
 
-## Get started
 
-1. Install dependencies
+**👨‍👩‍👧‍👦 Team Member**
+1. Kenneth Jonathan Mardiyo
+2. Angelina Leanore
+3. Bryan Christopher Pradibta
+4. Kelvin Vallian Guinawa
+5. Harrison Matthew Widjaja
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+**🛠️ Technologies Used**
 ```bash
-npm run reset-project
+* React Native (Expo Router) – Cross-platform mobile development
+* Async Storage - Built in Storage
+* TypeScript - App logic 
+* NFC Tools – Tools to Write the NFC access on Android
+* Framer Motion / React Native Reanimated – Badge unlock animations
+* DeepSeek API - Integrated Bot JomAI
+* GoogleMap API - Integrating Real Time World Map for Guidance
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**🎯 Challenge & Approach**
+1. Time Constraint
+> ⏱️ Challenge: We only had approximately 48 hours to complete the task.
+🚀 Approach: We assigned designated roles to each team member. Once a member completed their task, they would delegate the next task to another teammate to ensure continuous progress.
 
-## Learn more
+2. NFC Integration
+>📱 Challenge: Due to limited experience, we were unable to implement the NFC feature directly into Expo Go.
+🧠 Approach: We used a web-based workaround to demonstrate the concept and simulate the NFC scanning as part of our demo.
 
-To learn more about developing your project with Expo, look at the following resources:
+3. GitHub Coordination
+>🔄 Challenge: We initially planned to use Flutter, but version control issues caused delays and conflicts.
+🚀 Approach: We switched to React Native, which offered simpler Git integration and better collaboration during rapid development.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+4. Frequent Bug Encounters
+>🐞 Challenge: Despite early task completion, we encountered multiple bugs close to the submission deadline.
+🧠 Approach: We conducted continuous quality checks and debugging sessions to ensure all core functionalities were working smoothly.
 
-## Join the community
+**📱 Usage Instructions**
 
-Join our community of developers creating universal apps.
+🔧 Installation
+```bash
+git clone https://github.com/Eronaeeell/Tourism.git
+cd Tourism
+npm install
+npx expo start
+```
+After running the application, to fully utilize the functionality you must
+```bash
+1. scan NFC
+2. claim badge
+3. user can freely make post with the newly acquired badge
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+🔑 Prerequisites
+- Node.js & npm
+- Expo Go App (install from Google Play)
+- Extension Javascript
+
+👨‍💻 Team & Hackathon
+
+
+Project: JomExplore
+
+
+Hackathon: ImagineHack 2025 by Taylor's University
+
+
+Track: "Reimagine Malaysia" – Smart Tourism
+
+
+
+
