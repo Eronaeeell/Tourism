@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
+import { OPENROUTER_API_KEY } from '@env';
 import {
   ActivityIndicator,
   Keyboard,
@@ -39,7 +40,7 @@ export default function ChatbotScreen() {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer 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',
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

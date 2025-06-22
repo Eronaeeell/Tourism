@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { GOOGLE_MAPS_API_KEY } from '@env'; 
 import {
   Animated,
   Dimensions,
@@ -11,7 +12,6 @@ import {
   View,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-
 type Location = {
   name: string;
   query: string;
@@ -106,7 +106,7 @@ const MapScreen: React.FC = () => {
   const cardRefs = useRef<Record<string, any>>({});
   const [fadeAnim] = useState(new Animated.Value(0));
 
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyAxL0a_KsN7iTGqnjxqCDkLxENyUBhZT4I&q=${encodeURIComponent(selected.query)}`;
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(selected.query)}`;
 
   const handleMouseEnter = (item: Location) => {
     const cardEl = cardRefs.current[item.name];
